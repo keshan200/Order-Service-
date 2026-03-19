@@ -1,0 +1,29 @@
+spring:
+  application:
+    name: Order-service
+
+  datasource:
+    url: jdbc:mysql://localhost:3306/scs?createDatabaseIfNotExist=true&allowPublicKeyRetrieval=true&useSSL=false
+    username: root
+    password: Ijse@123
+    driver-class-name: com.mysql.cj.jdbc.Driver
+
+
+  jpa:
+    hibernate:
+      ddl-auto: update
+
+
+      properties:
+        hibernate:
+          dialect: org.hibernate.dialect.MySQLDialect
+    open-in-view: false
+    show-sql: true
+
+  main:
+    allow-bean-definition-overriding: true
+
+
+
+server:
+  port: 8081
