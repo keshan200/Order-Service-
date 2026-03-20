@@ -1,6 +1,7 @@
 package lk.ijse.orderservice.entity;
 
 import com.fasterxml.jackson.annotation.JsonBackReference;
+import com.fasterxml.jackson.annotation.JsonManagedReference;
 import jakarta.persistence.*;
 import lombok.AllArgsConstructor;
 import lombok.Data;
@@ -26,4 +27,9 @@ public class Customers {
     @JoinColumn(name = "user_id", nullable = false)
     @JsonBackReference
     private Users user;
+
+
+    @OneToMany(mappedBy = "customerProfile", cascade = CascadeType.ALL,fetch = FetchType.EAGER)
+    @JsonManagedReference
+    private java.util.List<Orders> orders;
 }
