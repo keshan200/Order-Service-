@@ -42,7 +42,7 @@ public class Orders {
     private OrderStatus status = OrderStatus.PENDING;
 
     @Column(nullable = false)
-    private Long createdBy;
+    private int createdBy;
 
 
     @PrePersist

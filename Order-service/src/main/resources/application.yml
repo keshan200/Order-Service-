@@ -29,3 +29,8 @@ jwt:
 
 server:
   port: 8081
+
+logging:
+    level:
+      lk.ijse.orderservice.proxy.TrackingClient: DEBUG
+

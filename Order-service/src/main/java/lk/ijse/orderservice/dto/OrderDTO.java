@@ -17,5 +17,5 @@ public class OrderDTO {
     private String receiverPhone;
     private Double weight;
     private OrderStatus status;
-    private Long createdBy;
+    private int createdBy;
 }

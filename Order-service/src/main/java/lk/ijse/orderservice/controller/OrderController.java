@@ -14,7 +14,7 @@ import java.util.List;
 
 @RestController
 @RequestMapping("api/v1/order")
-@CrossOrigin(origins = "*")
+@CrossOrigin(origins = "http://localhost:3000")
 public class OrderController {
 
     private final OrderService orderService;
@@ -23,17 +23,42 @@ public class OrderController {
         this.orderService = orderService;
     }
 
+
+
+    @GetMapping("/full/{orderCode}")
+    public ResponseEntity<ResponseDTO> getFullOrder(
+            @PathVariable String orderCode) {
+
+        Object data = orderService.getFullOrder(orderCode);
+
+        if (data instanceof Integer && (int) data == VarList.Not_Found) {
+            return ResponseEntity.status(404).body(
+                    new ResponseDTO(VarList.Not_Found, "Not Found", null)
+            );
+        } else if (data instanceof Integer && (int) data == VarList.Internal_Server_Error) {
+            return ResponseEntity.status(500).body(
+                    new ResponseDTO(VarList.Internal_Server_Error, "Error", null)
+            );
+        } else {
+            return ResponseEntity.ok(
+                    new ResponseDTO(VarList.OK, "Success", data)
+            );
+        }
+    }
+
+
     @PostMapping(value = "/save", consumes = MediaType.APPLICATION_JSON_VALUE)
     public ResponseEntity<ResponseDTO> createOrder(@RequestBody @Valid OrderDTO orderDTO) {
         try {
-            int result = orderService.createOrder(orderDTO);
+            String result = orderService.createOrder(orderDTO);
+
+            if (result.startsWith("ORD-")) {
+                return ResponseEntity.status(HttpStatus.CREATED)
+                        .body(new ResponseDTO(VarList.Created, "Order created successfully. Code: " + result, result));
+            }
 
             switch (result) {
-                case VarList.Created -> {
-                    return ResponseEntity.status(HttpStatus.CREATED)
-                            .body(new ResponseDTO(VarList.Created, "Order created successfully", orderDTO));
-                }
-                case VarList.Not_Acceptable -> {
+                case "ALREADY_EXISTS" -> {
                     return ResponseEntity.status(HttpStatus.NOT_ACCEPTABLE)
                             .body(new ResponseDTO(VarList.Not_Acceptable, "Order already exists", null));
                 }
@@ -48,6 +73,7 @@ public class OrderController {
                     .body(new ResponseDTO(VarList.Internal_Server_Error, "Internal server error", e.getMessage()));
         }
     }
+
 
     @PutMapping(value = "/update", consumes = MediaType.APPLICATION_JSON_VALUE)
     public ResponseEntity<ResponseDTO> updateOrder(@RequestBody @Valid OrderDTO orderDTO) {
